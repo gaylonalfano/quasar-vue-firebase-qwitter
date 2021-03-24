@@ -5,7 +5,7 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="text-weight-bold">
-          <span class="gt-sm">Qwitter</span>
+          <span class="gt-sm">{{ $route.name }}</span>
           <q-icon
             class="header-icon q-pa-md lt-md"
             name="fas fa-dove"
@@ -27,7 +27,7 @@
       <!-- Add the QList component: https://next.quasar.dev/vue-components/list-and-list-items#qitemsection -->
       <q-list>
         <!-- Add our Navigation Links -->
-        <q-item :to="{ name: 'Home' }" clickable v-ripple>
+        <q-item :to="{ name: 'Home' }" exact clickable v-ripple>
           <q-item-section avatar>
             <q-icon name="home" size="md" />
           </q-item-section>
@@ -35,7 +35,7 @@
           <q-item-section class="text-h6 text-weight-bold">Home</q-item-section>
         </q-item>
 
-        <q-item :to="{ name: 'About' }" clickable v-ripple>
+        <q-item :to="{ name: 'About' }" exact clickable v-ripple>
           <q-item-section avatar>
             <q-icon name="help" size="md" />
           </q-item-section>
@@ -128,7 +128,7 @@ import { defineComponent, ref } from 'vue';
 export default defineComponent({
   setup() {
     const leftDrawerOpen = ref<boolean>(false);
-    const rightDrawerOpen = ref<boolean>(true);
+    const rightDrawerOpen = ref<boolean>(false);
 
     return {
       leftDrawerOpen,
