@@ -40,7 +40,7 @@
     <q-separator class="divider" size="10px" color="grey-2" />
 
     <!-- === Tweets Feed === -->
-    <q-list class="">
+    <q-list v-for="qweet in qweets" :key="qweet.date" class="">
       <q-item class="q-py-md">
         <q-item-section avatar top>
           <q-avatar>
@@ -50,19 +50,13 @@
 
         <q-item-section>
           <q-item-label class="text-subtitle1"
-            ><strong>Gaylon Alfano</strong
-            ><span class="text-grey-7 q-mx-xs"
-              >@gaylonalfano</span
-            ></q-item-label
+            ><strong>{{ qweet.username }}</strong
+            ><span class="text-grey-7 q-mx-xs">{{
+              qweet.handler
+            }}</span></q-item-label
           >
           <q-item-label class="qweet-content">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Expedita
-            nisi, rem soluta itaque.
-            <br />
-            <br />
-
-            sunt et error aliquam excepturi laborum ex libero vitae est, iusto
-            non unde quasi molestias dolorum. Fuga?
+            {{ qweet.content }}
           </q-item-label>
           <!-- Add Action Bar of Icons -->
           <div class="qweet-icons row justify-between q-mt-sm">
@@ -73,7 +67,9 @@
           </div>
         </q-item-section>
 
-        <q-item-section side top> 1 min ago </q-item-section>
+        <q-item-section side top>
+          {{ formatDistance(qweet.date, new Date()) }}
+        </q-item-section>
       </q-item>
     </q-list>
   </q-page>
@@ -81,13 +77,44 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { formatDistance } from 'date-fns';
+
+interface Qweet {
+  username: string;
+  handler: string;
+  content: string;
+  date: number;
+}
 
 export default defineComponent({
   name: 'Home',
   setup() {
     const newQweetContent = ref<string>('');
+    const qweets: Qweet[] = [
+      {
+        username: 'Gaylon Alfano',
+        handler: '@gaylonalfano',
+        content:
+          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea quo repudiandae perspiciatis saepe praesentium architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
+        date: 1616654601670,
+      },
+      {
+        username: 'Elon Musk',
+        handler: 'teslaking',
+        content:
+          'Consectetur adipisicing elit. Ea quo repudiandae perspiciatis saepe praesentium architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
+        date: 1616655054439,
+      },
+      {
+        username: 'Bruce Willis',
+        handler: 'yippykayay',
+        content:
+          'Architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
+        date: 1616655054439,
+      },
+    ];
 
-    return { newQweetContent };
+    return { newQweetContent, qweets, formatDistance };
   },
 });
 </script>
