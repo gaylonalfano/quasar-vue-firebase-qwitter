@@ -1,78 +1,110 @@
 <template>
-  <q-page>
-    <!-- === NewQweet === -->
-    <!-- Add a Grid Row to contain TWO nested columns -->
-    <!-- Force button to bottom using items-end -->
-    <div class="q-py-lg q-px-md row items-end q-col-gutter-md">
-      <!-- Column for the input and avatar -->
-      <div class="col">
-        <q-input
-          bottom-slots
-          v-model="newQweetContent"
-          placeholder="What's happening?"
-          counter
-          maxlength="280"
-          autogrow
-          :input-style="{ fontSize: '19px', lineHeight: '1.4' }"
-        >
-          <template v-slot:before>
-            <q-avatar size="lg">
-              <img src="https://cdn.quasar.dev/img/avatar5.jpg" />
-            </q-avatar>
-          </template>
-        </q-input>
-      </div>
-      <!-- Column for the submit button -->
-      <div class="col col-shrink">
-        <!-- Add margin-bottom on the button to lift it a little -->
-        <q-btn
-          @click="addQweet"
-          unelevated
-          rounded
-          class="q-mb-lg"
-          color="primary"
-          label="Qweet"
-          :disable="!newQweetContent"
-          no-caps
-        />
-      </div>
-    </div>
-
-    <q-separator class="divider" size="10px" color="grey-2" />
-
-    <!-- === Tweets Feed === -->
-    <q-list v-for="qweet in qweets" :key="qweet.date" class="">
-      <q-item class="q-py-md">
-        <q-item-section avatar top>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
-          </q-avatar>
-        </q-item-section>
-
-        <q-item-section>
-          <q-item-label class="text-subtitle1"
-            ><strong>{{ qweet.username }}</strong
-            ><span class="text-grey-7 q-mx-xs">{{
-              qweet.handler
-            }}</span></q-item-label
+  <!-- Make page position relative so scroll area is absolute in order -->
+  <!-- for Left Drawer not to scroll off page -->
+  <q-page class="relative-position">
+    <q-scroll-area class="absolute full-width full-height">
+      <!-- === NewQweet === -->
+      <!-- Add a Grid Row to contain TWO nested columns -->
+      <!-- Force button to bottom using items-end -->
+      <div class="q-py-lg q-px-md row items-end q-col-gutter-md">
+        <!-- Column for the input and avatar -->
+        <div class="col">
+          <q-input
+            v-model="newQweetContent"
+            :input-style="{ fontSize: '19px', lineHeight: '1.4' }"
+            placeholder="What's happening?"
+            maxlength="280"
+            bottom-slots
+            autogrow
+            counter
           >
-          <q-item-label class="qweet-content">
-            {{ qweet.content }}
-          </q-item-label>
-          <!-- Add Action Bar of Icons -->
-          <div class="qweet-icons row justify-between q-mt-sm">
-            <q-btn color="grey" icon="far fa-comment" size="sm" flat round />
-            <q-btn color="grey" icon="fas fa-retweet" size="sm" flat round />
-            <q-btn color="grey" icon="far fa-heart" size="sm" flat round />
-            <q-btn color="grey" icon="fas fa-trash" size="sm" flat round />
-          </div>
-        </q-item-section>
+            <template v-slot:before>
+              <q-avatar size="lg">
+                <img src="https://cdn.quasar.dev/img/avatar5.jpg" />
+              </q-avatar>
+            </template>
+          </q-input>
+        </div>
+        <!-- Column for the submit button -->
+        <div class="col col-shrink">
+          <!-- Add margin-bottom on the button to lift it a little -->
+          <q-btn
+            @click="addQweet"
+            :disable="!newQweetContent"
+            class="q-mb-lg"
+            color="primary"
+            label="Qweet"
+            no-caps
+            unelevated
+            rounded
+          />
+        </div>
+      </div>
 
-        <q-item-section side top>
-          {{ formatDistance(qweet.date, new Date()) }}
-        </q-item-section>
-      </q-item>
-    </q-list>
+      <q-separator class="divider" size="10px" color="grey-2" />
+
+      <!-- === Tweets Feed === -->
+      <q-list separator>
+        <!-- Wrap Tweets with Transtion-Group Component -->
+        <!-- NOTE Must have v-for INSIDE (on q-item, not q-list) of transition component -->
+        <transition-group
+          appear
+          enter-active-class="animated fadeIn slow"
+          leave-active-class="animated fadeOut slow"
+        >
+          <!-- Single Tweet Item -->
+          <q-item v-for="qweet in qweets" :key="qweet.date" class="q-py-md">
+            <q-item-section avatar top>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label class="text-subtitle1"
+                ><strong>{{ qweet.username }}</strong
+                ><span class="text-grey-7 q-mx-xs"
+                  >{{ qweet.handler }} <br class="lt-md" />
+                  &bull;
+                  {{ formatDistance(qweet.date, new Date()) }}
+                </span></q-item-label
+              >
+              <q-item-label class="qweet-content">
+                {{ qweet.content }}
+              </q-item-label>
+              <!-- Add Action Bar of Icons/Buttons -->
+              <div class="qweet-icons row justify-between q-mt-sm">
+                <q-btn
+                  color="grey"
+                  icon="far fa-comment"
+                  size="sm"
+                  flat
+                  round
+                />
+                <q-btn
+                  color="grey"
+                  icon="fas fa-retweet"
+                  size="sm"
+                  flat
+                  round
+                />
+                <q-btn color="grey" icon="far fa-heart" size="sm" flat round />
+                <q-btn
+                  @click="deleteQweet(qweet)"
+                  color="grey"
+                  icon="fas fa-trash"
+                  size="sm"
+                  flat
+                  round
+                />
+              </div>
+            </q-item-section>
+
+            <q-item-section side top> </q-item-section>
+          </q-item>
+        </transition-group>
+      </q-list>
+    </q-scroll-area>
   </q-page>
 </template>
 
@@ -112,7 +144,7 @@ export default defineComponent({
       },
     ];
 
-    const qweets: Qweet[] = [
+    const qweets = ref<Qweet[]>([
       {
         username: 'Gaylon Alfano',
         handler: '@gaylonalfano',
@@ -132,9 +164,10 @@ export default defineComponent({
         handler: '@yippykayay',
         content:
           'Architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
-        date: 1616655054439,
+        date: 1616726930472,
       },
-    ];
+    ]);
+    console.log('qweets INIT: ', qweets.value);
 
     function addQweet() {
       // Randomly select a user from users
@@ -149,14 +182,29 @@ export default defineComponent({
       };
 
       // Append to beginning (unshift) instead of end (push)
-      qweets.unshift(newQweet);
-      console.log('qweets AFTER: ', qweets);
+      qweets.value.unshift(newQweet);
+      console.log('qweets AFTER: ', qweets.value);
 
       // Clear newQweetContent so it quickly loads
       newQweetContent.value = '';
     }
 
-    return { newQweetContent, qweets, formatDistance, addQweet };
+    function deleteQweet(qweet: Qweet) {
+      console.log('deleteQweet:qweet: ', qweet);
+      // Eventually we'll be using Firestore IDs, etc.
+      // For now using date as the identifier
+      const dateToDelete = qweet.date;
+      const indexToDelete = qweets.value.findIndex(
+        (qweet: Qweet) => qweet.date === dateToDelete
+      );
+      console.log('indexToDelete: ', indexToDelete);
+      // Delete the actual Qweet using splice()
+      qweets.value.splice(indexToDelete, 1);
+      //qweets.value.filter((qweet: Qweet) => qweet.date != dateToDelete); // Doesn't really delete...
+      console.log('qweets AFTER: ', qweets.value);
+    }
+
+    return { newQweetContent, qweets, formatDistance, addQweet, deleteQweet };
   },
 });
 </script>
