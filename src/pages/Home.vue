@@ -26,6 +26,7 @@
       <div class="col col-shrink">
         <!-- Add margin-bottom on the button to lift it a little -->
         <q-btn
+          @click="addQweet"
           unelevated
           rounded
           class="q-mb-lg"
@@ -86,10 +87,31 @@ interface Qweet {
   date: number;
 }
 
+interface User {
+  username: string;
+  handler: string;
+}
+
 export default defineComponent({
   name: 'Home',
   setup() {
     const newQweetContent = ref<string>('');
+
+    const users: User[] = [
+      {
+        username: 'Gaylon Alfano',
+        handler: '@gaylonalfano',
+      },
+      {
+        username: 'Elon Musk',
+        handler: '@teslaking',
+      },
+      {
+        username: 'Bruce Willis',
+        handler: '@yippykayay',
+      },
+    ];
+
     const qweets: Qweet[] = [
       {
         username: 'Gaylon Alfano',
@@ -100,21 +122,41 @@ export default defineComponent({
       },
       {
         username: 'Elon Musk',
-        handler: 'teslaking',
+        handler: '@teslaking',
         content:
           'Consectetur adipisicing elit. Ea quo repudiandae perspiciatis saepe praesentium architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
         date: 1616655054439,
       },
       {
         username: 'Bruce Willis',
-        handler: 'yippykayay',
+        handler: '@yippykayay',
         content:
           'Architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
         date: 1616655054439,
       },
     ];
 
-    return { newQweetContent, qweets, formatDistance };
+    function addQweet() {
+      // Randomly select a user from users
+      const randomUser = users[Math.floor(Math.random() * users.length)];
+      console.log('addQweet:randomUser: ', randomUser);
+
+      const newQweet: Qweet = {
+        username: randomUser.username,
+        handler: randomUser.handler,
+        content: newQweetContent.value,
+        date: Date.now(),
+      };
+
+      // Append to beginning (unshift) instead of end (push)
+      qweets.unshift(newQweet);
+      console.log('qweets AFTER: ', qweets);
+
+      // Clear newQweetContent so it quickly loads
+      newQweetContent.value = '';
+    }
+
+    return { newQweetContent, qweets, formatDistance, addQweet };
   },
 });
 </script>
@@ -131,5 +173,3 @@ export default defineComponent({
 .qweet-icons
   margin-left: -5px
 </style>
-
-
