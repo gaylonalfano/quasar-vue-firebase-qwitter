@@ -1,6 +1,7 @@
-import { ref } from "vue";
-import { storage } from "@/firebase/config";
-import getUser from "@/composables/getUser";
+/* eslint-disable */
+import { ref } from 'vue';
+import { storage } from '../boot/firebase';
+import getUser from '../composables/getUser';
 
 const { user } = getUser();
 
@@ -45,7 +46,7 @@ function useStorage() {
     try {
       // Delete the object/file using storageRef.delete()
       await storageRef.delete();
-      console.log("SUCCESS:useStorage:deleteImage");
+      console.log('SUCCESS:useStorage:deleteImage');
     } catch (err) {
       error.value = err.message;
       console.log(error.value);

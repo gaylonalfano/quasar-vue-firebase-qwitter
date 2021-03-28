@@ -1,11 +1,11 @@
-import { ref, watchEffect } from "vue";
-import { db } from "@/firebase/config";
+import { ref, watchEffect } from 'vue';
+import { db } from '../boot/firebase';
 import {
   QuerySnapshot,
   QueryDocumentSnapshot,
   DocumentData,
   FirestoreError,
-} from "@firebase/firestore-types";
+} from '@firebase/firestore-types';
 
 // Create a general purpose function to get passed collection
 // Q: I believe this should be async?
@@ -17,7 +17,7 @@ function getCollection(collection: string) {
 
   // Create a ref for our collection as well and sort
   // NOTE Type is CollectionReference<DocumentData>
-  const collectionRef = db.collection(collection).orderBy("createdAt");
+  const collectionRef = db.collection(collection).orderBy('createdAt');
 
   // Let's now use onSnapshot() to add real-time listener for QuerySnapshot events
   // NOTE onNext callback returns snapshot object that contains all the docs, etc.
@@ -26,7 +26,7 @@ function getCollection(collection: string) {
   // UPDATE Storing this in const to unsubscribe from listener after a component un-mounts
   const unsubscribe = collectionRef.onSnapshot(
     (snapshot: QuerySnapshot<DocumentData>) => {
-      console.log("snapshot"); // Keeping track of how many times the listener stacks up
+      console.log('snapshot'); // Keeping track of how many times the listener stacks up
       // Use snapshot object to update documents Ref
       // Q: results even needed? map() returns Array already...
       // A: Yes, have problems using TS if I don't separate.
@@ -49,15 +49,16 @@ function getCollection(collection: string) {
       // Q: Use map() or forEach()?
       // A: I believe forEach() since it doesn't return an Array like map().
       // A: We're already adding results Array to store.
-      let results: QueryDocumentSnapshot<DocumentData>[] = [];
+      const results: QueryDocumentSnapshot<DocumentData>[] = [];
       snapshot.docs.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
         // NOTE Must add 'doc.data().createdAt &&' logic to check whether server-side createdAt has a value!
         // Otherwise it will use a local version of snapshot and createdAt, which will
         // be more like a REFERENCE to a timestamp, instead of the real thing in the server.
         doc.data().createdAt &&
-          results.push({ ...doc.data(), id: doc.id } as QueryDocumentSnapshot<
-            DocumentData
-          >);
+          results.push({
+            ...doc.data(),
+            id: doc.id,
+          } as QueryDocumentSnapshot<DocumentData>);
       });
       // Update our documents with new results
       documents.value = results;
@@ -70,7 +71,7 @@ function getCollection(collection: string) {
       // Reset documents.value to be null
       documents.value = null;
       // Update error.value
-      error.value = "Could not fetch collectionRef onSnapshot data.";
+      error.value = 'Could not fetch collectionRef onSnapshot data.';
     }
   );
 

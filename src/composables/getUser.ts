@@ -1,6 +1,5 @@
-import { ref } from "vue";
-//import { auth } from "@/firebase/config";
-import { auth } from "../firebase/config";
+import { ref } from 'vue';
+import { auth } from '../boot/firebase';
 
 const user = ref(auth.currentUser); // ref<firebase.User | null>
 
@@ -8,7 +7,7 @@ const user = ref(auth.currentUser); // ref<firebase.User | null>
 // NOTE Technically adding an 'observer'
 auth.onAuthStateChanged((_user) => {
   // Each sign-in/out let's update the user Ref value to keep reactive
-  console.log("User state change. Current user is: ", _user);
+  console.log('User state change. Current user is: ', _user);
   user.value = _user; // firebase.User | null
 });
 

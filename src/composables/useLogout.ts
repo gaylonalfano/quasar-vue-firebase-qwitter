@@ -1,6 +1,6 @@
-import { ref } from "vue";
+import { ref } from 'vue';
 // import { auth } from "@/firebase/config";
-import { auth } from "../firebase/config";
+import { auth } from '../boot/firebase';
 
 // Create a Global Error
 const error = ref<string | null>(null);
@@ -18,8 +18,8 @@ async function logout() {
     // Reset our isPending back to false since request is over
     isPending.value = false;
   } catch (err) {
-    console.log(err.message); // Default Firebase error
-    error.value = err.message;
+    // console.log(err.message); // Default Firebase error
+    error.value = err.message; /* eslint-disable-line */
     // Reset our isPending back to false since request is over
     isPending.value = false;
   }

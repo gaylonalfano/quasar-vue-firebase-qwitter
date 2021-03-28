@@ -1,6 +1,6 @@
-import { ref } from "vue";
+import { ref } from 'vue';
 // import { auth } from "@/firebase/config";
-import { auth } from "../firebase/config";
+import { auth } from '../boot/firebase';
 
 // Create an error Ref. Just once! Don't declare inside useSignup()!
 const error = ref<string | null>(null);
@@ -21,7 +21,7 @@ async function signup(email: string, password: string, displayName: string) {
     const response = await auth.createUserWithEmailAndPassword(email, password);
     // Confirm we have a response object returned, or throw error
     if (!response) {
-      throw new Error("Could not complete signup.");
+      throw new Error('Could not complete signup.');
     }
 
     // Let's update the displayName since it's undefined when first registering
@@ -34,9 +34,9 @@ async function signup(email: string, password: string, displayName: string) {
     isPending.value = false;
     return response;
   } catch (err) {
-    console.log(err.message);
+    // console.log(err.message);
     // Update error Ref value with err.message
-    error.value = err.message;
+    error.value = err.message; /* eslint-disable-line */
     isPending.value = false;
   }
 }

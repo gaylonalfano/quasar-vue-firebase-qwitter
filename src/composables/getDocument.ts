@@ -1,11 +1,11 @@
-import { ref, watchEffect } from "vue";
-import { db } from "@/firebase/config";
+import { ref, watchEffect } from 'vue';
+import { db } from '../boot/firebase';
 import {
   DocumentData,
   DocumentSnapshot,
   FirestoreError,
   DocumentReference,
-} from "@firebase/firestore-types";
+} from '@firebase/firestore-types';
 
 // Create a general purpose function to get passed collection
 // Q: I believe this should be async?
@@ -27,9 +27,9 @@ function getDocument(collection: string, id: string) {
   const error = ref<string | null>(null);
 
   // Create a FS Ref for our document as well and sort
-  const documentRef = db.collection(collection).doc(id) as DocumentReference<
-    DocumentData
-  >;
+  const documentRef = db
+    .collection(collection)
+    .doc(id) as DocumentReference<DocumentData>;
 
   // Let's now use onSnapshot() to add real-time listener for QuerySnapshot events
   // NOTE onNext callback returns snapshot object that contains the doc
@@ -38,22 +38,22 @@ function getDocument(collection: string, id: string) {
   // UPDATE Storing this in const to unsubscribe from listener after a component un-mounts
   const unsubscribe = documentRef.onSnapshot(
     (doc: DocumentSnapshot<DocumentData>) => {
-      console.log("snapshot"); // Keeping track of how many times the listener stacks up
+      console.log('snapshot'); // Keeping track of how many times the listener stacks up
       // Confirm that the 'doc' actually exists
       // NOTE: Shaun used if (doc.data())
       if (doc.exists) {
-        console.log("PASSED:doc.exists");
+        console.log('PASSED:doc.exists');
         // We have a doc. Let's update our document.value Ref by spreading
         // TS ERROR: We meet again! hahah
         document.value = {
           ...(doc.data() as DocumentData),
           id: doc.id,
         };
-        console.log("UPDATED:document.value: ", document.value);
+        console.log('UPDATED:document.value: ', document.value);
         // Reset the error.value in case there was one
         error.value = null;
       } else {
-        error.value = "This document does not exist.";
+        error.value = 'This document does not exist.';
       }
     },
     (err: FirestoreError) => {
@@ -62,7 +62,7 @@ function getDocument(collection: string, id: string) {
       // Reset document.value to be null
       document.value = null;
       // Update error.value
-      error.value = "Could not fetch documentRef onSnapshot data.";
+      error.value = 'Could not fetch documentRef onSnapshot data.';
     }
   );
 

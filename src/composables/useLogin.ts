@@ -1,6 +1,6 @@
-import { ref } from "vue";
+import { ref } from 'vue';
 //import { auth } from "@/firebase/config";
-import { auth } from "../firebase/config";
+import { auth } from '../boot/firebase';
 
 const error = ref<string | null>(null);
 // Add Ref for whenever making a request
@@ -32,8 +32,8 @@ async function login(email: string, password: string) {
     isPending.value = false;
     return response;
   } catch (err) {
-    console.log(err.message); // Internal Firebase default error message
-    error.value = "Incorrect login credentials."; // Message displayed to user
+    //console.log(err.message); // Internal Firebase default error message
+    error.value = 'Incorrect login credentials.'; // Message displayed to user
     // Reset our isPending back to false since request is over
     isPending.value = false;
   }

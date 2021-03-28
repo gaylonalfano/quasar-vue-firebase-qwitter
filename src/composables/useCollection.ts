@@ -1,5 +1,5 @@
-import { ref } from "vue";
-import { db } from "@/firebase/config";
+import { ref } from 'vue';
+import { db } from '../boot/firebase';
 
 // NOTE This is a more general purpose composable
 // so more functionality will be declared INSIDE.
@@ -14,7 +14,7 @@ function useCollection(collection: string) {
   const isPending = ref<boolean>(false);
 
   // Create an async function that adds the document to collection
-  async function addDoc(doc: object) {
+  async function addDoc(doc: Record<string, unknown>) {
     // Reset error.value = null for every request
     error.value = null;
     isPending.value = true;
@@ -26,12 +26,12 @@ function useCollection(collection: string) {
       const response = await db.collection(collection).add(doc);
       // Reset our isPending back to false since request is over
       isPending.value = false;
-      console.log("addDoc:add:doc successful!", doc);
-      console.log("addDoc:add:response: ", response);
+      console.log('addDoc:add:doc successful!', doc);
+      console.log('addDoc:add:response: ', response);
       return response;
     } catch (err) {
-      console.log(err.message);
-      error.value = "Could not add document.";
+      // console.log(err.message);
+      error.value = 'Could not add document.';
       // Reset our isPending back to false since request is over
       isPending.value = false;
     }
