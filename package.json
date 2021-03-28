@@ -6,6 +6,7 @@
   "author": "gaylonalfano <gaylon.alfano@gmail.com>",
   "private": true,
   "scripts": {
+    "dev": "QENV=development quasar dev",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0"
   },
@@ -13,10 +14,12 @@
     "@quasar/extras": "^1.0.0",
     "core-js": "^3.6.5",
     "date-fns": "^2.19.0",
+    "firebase": "^8.3.1",
     "quasar": "^2.0.0-beta.11"
   },
   "devDependencies": {
     "@quasar/app": "^3.0.0-beta.10",
+    "@quasar/quasar-app-extension-qenv": "^1.1.0",
     "@types/node": "^10.17.15",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
