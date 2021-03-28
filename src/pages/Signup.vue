@@ -1,17 +1,24 @@
 <template>
-  <div class="q-pa-md" style="max-width: 400px">
-    <q-form @submit.prevent="handleSignup" class="q-gutter-md">
-      <q-input filled v-model="displayName" label="Display name" type="text" />
+  <q-page>
+    <div class="q-pa-md" style="max-width: 400px">
+      <q-form @submit.prevent="handleSignup" class="q-gutter-md">
+        <q-input
+          filled
+          v-model="displayName"
+          label="Display name"
+          type="text"
+        />
 
-      <q-input filled v-model="email" label="Email address" type="email" />
+        <q-input filled v-model="email" label="Email address" type="email" />
 
-      <q-input filled type="password" v-model="password" label="Password" />
+        <q-input filled type="password" v-model="password" label="Password" />
 
-      <div>
-        <q-btn label="Submit" type="submit" color="primary" />
-      </div>
-    </q-form>
-  </div>
+        <div>
+          <q-btn label="Submit" type="submit" color="primary" />
+        </div>
+      </q-form>
+    </div>
+  </q-page>
 </template>
 
 
