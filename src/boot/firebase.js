@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-//import 'firebase/storage';
+import 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyD06aY2OjcusNClseRKYxJGX0E_AHIkpoE',
@@ -25,7 +25,7 @@ const auth = firebase.auth();
 const db = firebase.firestore(fb);
 
 // Initialize Firebase Storage Service
-//const storage = firebase.storage();
+const storage = firebase.storage();
 
 // Initialize Functions Service
 //const functions = firebase.functions();
@@ -36,4 +36,4 @@ const db = firebase.firestore(fb);
 const timestamp =
   firebase.firestore.FieldValue.serverTimestamp; /* eslint-disable-line */
 
-export { fb, auth, db, timestamp };
+export { fb, auth, db, storage, timestamp };
