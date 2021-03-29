@@ -8,7 +8,6 @@
           label="Display name"
           type="text"
         />
-
         <q-input filled v-model="email" label="Email address" type="email" />
 
         <q-input filled type="password" v-model="password" label="Password" />
@@ -49,6 +48,7 @@ export default defineComponent({
     const { signup, error } = useSignup();
 
     const displayName = ref<string>('');
+    //const handle = ref<string>('');
     const email = ref<string>('');
     const password = ref<string>('');
 
@@ -59,9 +59,10 @@ export default defineComponent({
       // Testing whether I can get user from response object instead
       // of auth.currentUser
       const response = await signup(
+        displayName.value,
         email.value,
-        password.value,
-        displayName.value
+        password.value
+        //handle.value
       );
       // Works but need auth.currentUser since you're not saving response
       // await signup(email.value, password.value, displayName.value);

@@ -3,6 +3,7 @@
   <!-- for Left Drawer not to scroll off page -->
   <q-page class="relative-position">
     <q-scroll-area class="absolute full-width full-height">
+      <h2 v-if="error">{{ error }}</h2>
       <!-- === NewQweet === -->
       <!-- Add a Grid Row to contain TWO nested columns -->
       <!-- Force button to bottom using items-end -->
@@ -29,7 +30,6 @@
         <div class="col col-shrink">
           <!-- Add margin-bottom on the button to lift it a little -->
           <q-btn
-            @click="addQweet"
             :disable="!newQweetContent"
             class="q-mb-lg"
             color="primary"
@@ -53,7 +53,7 @@
           leave-active-class="animated fadeOut slow"
         >
           <!-- Single Tweet Item -->
-          <q-item v-for="qweet in qweets" :key="qweet.date" class="q-py-md">
+          <q-item v-for="qweet in qweets" :key="qweet.id" class="q-py-md">
             <q-item-section avatar top>
               <q-avatar>
                 <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
@@ -62,11 +62,11 @@
 
             <q-item-section>
               <q-item-label class="text-subtitle1"
-                ><strong>{{ qweet.username }}</strong
+                ><strong>{{ qweet.displayName }}</strong
                 ><span class="text-grey-7 q-mx-xs"
-                  >{{ qweet.handler }} <br class="lt-md" />
+                  >@{{ qweet.displayName.toLowerCase() }} <br class="lt-md" />
                   &bull;
-                  {{ formatDistance(qweet.date, new Date()) }}
+                  {{ formatDistanceToNow(qweet.createdAt.toDate()) }}
                 </span></q-item-label
               >
               <q-item-label class="qweet-content">
@@ -89,14 +89,7 @@
                   round
                 />
                 <q-btn color="grey" icon="far fa-heart" size="sm" flat round />
-                <q-btn
-                  @click="deleteQweet(qweet)"
-                  color="grey"
-                  icon="fas fa-trash"
-                  size="sm"
-                  flat
-                  round
-                />
+                <q-btn color="grey" icon="fas fa-trash" size="sm" flat round />
               </div>
             </q-item-section>
 
@@ -109,15 +102,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { formatDistance } from 'date-fns';
+import { defineComponent, ref, Ref } from 'vue';
+import getCollection from '../composables/getCollection';
+import { formatDistanceToNow } from 'date-fns';
 
-interface Qweet {
-  username: string;
-  handler: string;
-  content: string;
-  date: number;
-}
+// interface Qweet {
+//   id?: string;
+//   displayName: string;
+//   //handler: string;
+//   content: string;
+//   date: number;
+// }
 
 interface User {
   username: string;
@@ -127,6 +122,11 @@ interface User {
 export default defineComponent({
   name: 'Home',
   setup() {
+    const { documents: qweets, error } = getCollection('qweets') as {
+      documents: Ref<object> /* eslint-disable-line */;
+      error: Ref<string | null>;
+    };
+
     const newQweetContent = ref<string>('');
 
     const users: User[] = [
@@ -144,67 +144,67 @@ export default defineComponent({
       },
     ];
 
-    const qweets = ref<Qweet[]>([
-      {
-        username: 'Gaylon Alfano',
-        handler: '@gaylonalfano',
-        content:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea quo repudiandae perspiciatis saepe praesentium architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
-        date: 1616654601670,
-      },
-      {
-        username: 'Elon Musk',
-        handler: '@teslaking',
-        content:
-          'Consectetur adipisicing elit. Ea quo repudiandae perspiciatis saepe praesentium architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
-        date: 1616655054439,
-      },
-      {
-        username: 'Bruce Willis',
-        handler: '@yippykayay',
-        content:
-          'Architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
-        date: 1616726930472,
-      },
-    ]);
-    console.log('qweets INIT: ', qweets.value);
+    // const qweets = ref<Qweet[]>([
+    //   {
+    //     username: 'Gaylon Alfano',
+    //     handler: '@gaylonalfano',
+    //     content:
+    //       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea quo repudiandae perspiciatis saepe praesentium architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
+    //     date: 1616654601670,
+    //   },
+    //   {
+    //     username: 'Elon Musk',
+    //     handler: '@teslaking',
+    //     content:
+    //       'Consectetur adipisicing elit. Ea quo repudiandae perspiciatis saepe praesentium architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
+    //     date: 1616655054439,
+    //   },
+    //   {
+    //     username: 'Bruce Willis',
+    //     handler: '@yippykayay',
+    //     content:
+    //       'Architecto sequi repellat veritatis aut possimus incidunt rem iusto, dignissimos voluptate necessitatibus! Ipsum doloribus animi voluptates?',
+    //     date: 1616726930472,
+    //   },
+    // ]);
+    // console.log('qweets INIT: ', qweets.value);
 
-    function addQweet() {
-      // Randomly select a user from users
-      const randomUser = users[Math.floor(Math.random() * users.length)];
-      console.log('addQweet:randomUser: ', randomUser);
+    // function addQweet() {
+    //   // Randomly select a user from users
+    //   const randomUser = users[Math.floor(Math.random() * users.length)];
+    //   console.log('addQweet:randomUser: ', randomUser);
 
-      const newQweet: Qweet = {
-        username: randomUser.username,
-        handler: randomUser.handler,
-        content: newQweetContent.value,
-        date: Date.now(),
-      };
+    //   const newQweet: Qweet = {
+    //     username: randomUser.username,
+    //     handler: randomUser.handler,
+    //     content: newQweetContent.value,
+    //     date: Date.now(),
+    //   };
 
-      // Append to beginning (unshift) instead of end (push)
-      qweets.value.unshift(newQweet);
-      console.log('qweets AFTER: ', qweets.value);
+    //   // Append to beginning (unshift) instead of end (push)
+    //   qweets.value.unshift(newQweet);
+    //   console.log('qweets AFTER: ', qweets.value);
 
-      // Clear newQweetContent so it quickly loads
-      newQweetContent.value = '';
-    }
+    //   // Clear newQweetContent so it quickly loads
+    //   newQweetContent.value = '';
+    // }
 
-    function deleteQweet(qweet: Qweet) {
-      console.log('deleteQweet:qweet: ', qweet);
-      // Eventually we'll be using Firestore IDs, etc.
-      // For now using date as the identifier
-      const dateToDelete = qweet.date;
-      const indexToDelete = qweets.value.findIndex(
-        (qweet: Qweet) => qweet.date === dateToDelete
-      );
-      console.log('indexToDelete: ', indexToDelete);
-      // Delete the actual Qweet using splice()
-      qweets.value.splice(indexToDelete, 1);
-      //qweets.value.filter((qweet: Qweet) => qweet.date != dateToDelete); // Doesn't really delete...
-      console.log('qweets AFTER: ', qweets.value);
-    }
+    // function deleteQweet(qweet: Qweet) {
+    //   console.log('deleteQweet:qweet: ', qweet);
+    //   // Eventually we'll be using Firestore IDs, etc.
+    //   // For now using date as the identifier
+    //   const dateToDelete = qweet.date;
+    //   const indexToDelete = qweets.value.findIndex(
+    //     (qweet: Qweet) => qweet.date === dateToDelete
+    //   );
+    //   console.log('indexToDelete: ', indexToDelete);
+    //   // Delete the actual Qweet using splice()
+    //   qweets.value.splice(indexToDelete, 1);
+    //   //qweets.value.filter((qweet: Qweet) => qweet.date != dateToDelete); // Doesn't really delete...
+    //   console.log('qweets AFTER: ', qweets.value);
+    // }
 
-    return { newQweetContent, qweets, formatDistance, addQweet, deleteQweet };
+    return { newQweetContent, qweets, formatDistanceToNow, error };
   },
 });
 </script>

@@ -18,6 +18,7 @@ function getCollection(collection: string) {
   // Create a ref for our collection as well and sort
   // NOTE Type is CollectionReference<DocumentData>
   const collectionRef = db.collection(collection).orderBy('createdAt');
+  console.log(collectionRef);
 
   // Let's now use onSnapshot() to add real-time listener for QuerySnapshot events
   // NOTE onNext callback returns snapshot object that contains all the docs, etc.
@@ -62,6 +63,8 @@ function getCollection(collection: string) {
       });
       // Update our documents with new results
       documents.value = results;
+      console.log('results: ', results);
+      console.log('getCollection:documents.value: ', documents.value);
       // Reset the error.value in case there was one
       error.value = null;
     },

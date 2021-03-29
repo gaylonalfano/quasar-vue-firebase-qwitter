@@ -27,7 +27,9 @@ async function signup(email: string, password: string, displayName: string) {
     // Let's update the displayName since it's undefined when first registering
     // via auth.createUserWithEmailAndPassword().
     // NOTE Use await to process this.
-    await response.user?.updateProfile({ displayName });
+    await response.user?.updateProfile({
+      displayName: displayName,
+    });
 
     // Let's return the response object so we can do other things with it.
     // NOTE response is Type firebase.auth.UserCredential

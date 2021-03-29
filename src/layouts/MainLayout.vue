@@ -16,6 +16,7 @@
       </q-toolbar>
     </q-header>
 
+    <!-- Left Drawer -->
     <q-drawer
       :width="280"
       show-if-above
@@ -44,9 +45,34 @@
             >About</q-item-section
           >
         </q-item>
+
+        <q-item
+          @click="handleLogout"
+          :to="{ name: 'Login' }"
+          class="absolute-bottom"
+          exact
+          clickable
+          v-ripple
+        >
+          <q-item-section side>
+            <q-avatar size="md">
+              <img src="https://cdn.quasar.dev/img/avatar.png" />
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-subtitle1"
+              ><strong>{{ user?.email }}</strong></q-item-label
+            >
+            <q-item-label caption>@{{ user?.displayName }}</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-icon name="logout" size="md" color="primary" />
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
+    <!-- Right Drawer -->
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
       <!-- drawer content -->
       <q-input
@@ -124,19 +150,38 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import useLogout from '../composables/useLogout';
+import getUser from '../composables/getUser';
 
 export default defineComponent({
   setup() {
+    const { user } = getUser();
+    const { logout, error } = useLogout();
+
     const leftDrawerOpen = ref<boolean>(false);
     const rightDrawerOpen = ref<boolean>(false);
+
+    const router = useRouter();
+
+    // Handle the logout and
+    async function handleLogout() {
+      await logout();
+      // redirect to '/' Login page
+      if (!error.value) {
+        console.log('SUCCESS:handleLogout');
+        void router.push({ name: 'Login' });
+      }
+    }
 
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
-
       rightDrawerOpen,
+      handleLogout,
+      user,
     };
   },
 });
