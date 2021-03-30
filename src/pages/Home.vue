@@ -103,46 +103,63 @@
 
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue';
-import getCollection from '../composables/getCollection';
 import { formatDistanceToNow } from 'date-fns';
+import { Timestamp, FieldValue } from '@firebase/firestore-types';
+import getCollection from '../composables/getCollection';
 
-// interface Qweet {
-//   id?: string;
-//   displayName: string;
-//   //handler: string;
-//   content: string;
-//   date: number;
-// }
-
-interface User {
-  username: string;
-  handler: string;
+interface Qweet {
+  id?: string;
+  content: string;
+  createdAt: Timestamp | FieldValue;
+  displayName: string;
+  userId: string;
 }
 
 export default defineComponent({
   name: 'Home',
   setup() {
     const { documents: qweets, error } = getCollection('qweets') as {
-      documents: Ref<object> /* eslint-disable-line */;
+      documents: Ref<Qweet[] | null>;
       error: Ref<string | null>;
     };
 
     const newQweetContent = ref<string>('');
 
-    const users: User[] = [
-      {
-        username: 'Gaylon Alfano',
-        handler: '@gaylonalfano',
-      },
-      {
-        username: 'Elon Musk',
-        handler: '@teslaking',
-      },
-      {
-        username: 'Bruce Willis',
-        handler: '@yippykayay',
-      },
-    ];
+    function addQweet() {
+      // Randomly select a user from users
+      const randomUser = users[Math.floor(Math.random() * users.length)];
+      console.log('addQweet:randomUser: ', randomUser);
+
+      const newQweet: Qweet = {
+        username: randomUser.username,
+        handler: randomUser.handler,
+        content: newQweetContent.value,
+        date: Date.now(),
+      };
+
+      // Append to beginning (unshift) instead of end (push)
+      qweets.value.unshift(newQweet);
+      console.log('qweets AFTER: ', qweets.value);
+
+      // Clear newQweetContent so it quickly loads
+      newQweetContent.value = '';
+    }
+
+    // STATIC DATA + FUNCTIONS
+    // const users: User[] = [
+    //   {
+    //     username: 'Gaylon Alfano',
+    //     handler: '@gaylonalfano',
+    //   },
+    //   {
+    //     username: 'Elon Musk',
+    //     handler: '@teslaking',
+    //   },
+    //   {
+    //     username: 'Bruce Willis',
+    //     handler: '@yippykayay',
+    //   },
+    // ];
 
     // const qweets = ref<Qweet[]>([
     //   {
